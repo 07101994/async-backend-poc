@@ -1,6 +1,7 @@
 ﻿using Backend.Queues.Redis;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
@@ -17,6 +18,7 @@ namespace Backend
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(new ConfigurationBuilder().AddCommandLine(args).Build())
                 .UseStartup<Startup>()
                 .Build();
     }
