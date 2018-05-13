@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Backend.Queues.Redis
 {
-    public class Publisher
+    public class Publisher : IPublisherQueue
     {
         private readonly string _channel;
         private readonly IConnection<ISubscriber> _conn;

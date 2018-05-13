@@ -11,9 +11,7 @@ namespace Backend
         public async static Task Main(string[] args)
         {
             var host = BuildWebHost(args);
-
-            await host.Services.GetRequiredService<TestSubscriber>().SubscribeAsync();
-
+            await host.Services.GetRequiredService<Subscriber>().SubscribeAsync();
             await host.RunAsync();
         }
 
