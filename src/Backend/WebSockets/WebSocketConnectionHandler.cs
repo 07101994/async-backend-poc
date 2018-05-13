@@ -49,6 +49,12 @@ namespace Backend.WebSockets
         public async Task SendAsync(Guid id, string message)
         {
             var socket = _room.Get(id);
+            if (socket == null)
+            {
+                _logger.LogInformation($"Client {id} does not belog to this server");
+                return;
+            }
+
             if (socket.State != WebSocketState.Open)
             {
                 _room.Remove(id);
