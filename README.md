@@ -1,2 +1,2 @@
 # async-backend-poc
-Proof of concept of using websockets to handle async backend operations
+PoC async backend operations in .NET core using websockets and Redis pub/sub.
