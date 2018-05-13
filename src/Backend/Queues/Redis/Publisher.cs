@@ -24,11 +24,10 @@ namespace Backend.Queues.Redis
 
         public async Task PublishAsync(object @event)
         {
-            if (!await _conn.TryConnectAsync()) throw new System.Exception("Cannot connect to Redis");
+            if (!await _conn.TryConnectAsync()) throw new Exception("Cannot connect to Redis");
 
-            var sub = _conn.GetSession();
-            await sub.PublishAsync(_channel, JsonConvert.SerializeObject(@event));
-            _logger.LogInformation("Event published");
+            await _conn.GetSession().PublishAsync(_channel, JsonConvert.SerializeObject(@event));
+            _logger.LogInformation($"Published event to channel {_channel}");
         }
     }
 }

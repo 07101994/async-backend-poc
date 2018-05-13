@@ -27,9 +27,7 @@ namespace Backend.Queues.Redis
         {
             if (!await _conn.TryConnectAsync()) throw new Exception("Cannot connect to Redis");
 
-            var sub = _conn.GetSession();
-            await sub.SubscribeAsync(_channel, (channel, value) => Handler(value));
-
+            await _conn.GetSession().SubscribeAsync(_channel, (channel, value) => Handler(value));
             _logger.LogInformation($"Subscribed to channel {_channel}");
         }
     }
