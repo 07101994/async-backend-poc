@@ -26,14 +26,19 @@ namespace Client
                 var buffer = new byte[1024 * 4];
                 for (var i = 1; i <= 10; i++)
                 {
-                    var messageString = $"Message number {i}";
-                    var message = Encoding.UTF8.GetBytes(messageString);
-                    await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(messageString), 0, Encoding.UTF8.GetByteCount(messageString)), WebSocketMessageType.Binary, true, CancellationToken.None);
-                    logger.LogInformation($"{clientId}|Sent message: {messageString}");
+                    var messageId = Guid.NewGuid();
+                    await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(messageId.ToString()), 0, Encoding.UTF8.GetByteCount(messageId.ToString())), WebSocketMessageType.Binary, true, CancellationToken.None);
+                    logger.LogInformation($"{clientId}|Sent message: {messageId}");
 
                     var response = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                    logger.LogInformation($"{clientId}|Received: {Encoding.UTF8.GetString(Compact(buffer, response.Count))}");
-                    Thread.Sleep(1000);
+                    var responseMessage = Encoding.UTF8.GetString(Compact(buffer, response.Count));
+
+                    if (messageId == Guid.Parse(responseMessage))
+                        logger.LogInformation($"{clientId}|Received ok: {responseMessage}");
+                    else
+                        logger.LogError($"{clientId}|Received error: {responseMessage}");
+
+                    Thread.Sleep(500);
                 }
 
                 await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
