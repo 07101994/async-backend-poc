@@ -46,7 +46,7 @@ echo "Starting $CLIENTS clients"
 cd $ROOT
 for ((i=1; i<=$CLIENTS; i++))
 do
-  docker run --rm -it --name async-client-$i --network async-backend-poc async-client 5001 &
+  docker run --rm -it --name async-client-$i --network async-backend-poc async-client async-backend-1:5001 &
 done
 wait
 
