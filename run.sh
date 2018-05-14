@@ -26,7 +26,10 @@ esac
 done
 
 docker network create async-backend-poc
-echo "Building server docker image.."
+echo "Starting redis server"
+docker run --rm --name redis --network async-backend-poc redis:4.0
+
+echo "Building server docker image"
 docker build --force-rm -f Dockerfile-backend -t async-backend .
 
 echo "Starting $SERVERS servers"
@@ -39,7 +42,7 @@ wait
 
 sleep 5000
 
-echo "Building client docker image.."
+echo "Building client docker image"
 docker build --force-rm -f Dockerfile-client -t async-client .
 
 echo "Starting $CLIENTS clients"
@@ -51,4 +54,5 @@ done
 wait
 
 echo "Process finished, cleaning it up.."
+docker rm redis -f
 docker networm rm async-backend-poc
