@@ -29,10 +29,10 @@ namespace Client
                     var messageString = $"Message number {i}";
                     var message = Encoding.UTF8.GetBytes(messageString);
                     await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(messageString), 0, Encoding.UTF8.GetByteCount(messageString)), WebSocketMessageType.Binary, true, CancellationToken.None);
-                    logger.LogInformation($"{clientId}|Sent: {0}", messageString);
+                    logger.LogInformation($"{clientId}|Sent message: {messageString}");
 
                     var response = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                    logger.LogInformation($"{clientId}|Received: {0}", Encoding.UTF8.GetString(Compact(buffer, response.Count)));
+                    logger.LogInformation($"{clientId}|Received: {Encoding.UTF8.GetString(Compact(buffer, response.Count))}");
                     Thread.Sleep(1000);
                 }
 
