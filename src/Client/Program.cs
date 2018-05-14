@@ -37,8 +37,6 @@ namespace Client
                         logger.LogInformation($"{clientId}|Received ok: {responseMessage}");
                     else
                         logger.LogError($"{clientId}|Received error: {responseMessage}");
-
-                    Thread.Sleep(500);
                 }
 
                 await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);

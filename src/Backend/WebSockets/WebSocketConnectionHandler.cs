@@ -51,7 +51,7 @@ namespace Backend.WebSockets
             var socket = _room.Get(id);
             if (socket == null)
             {
-                _logger.LogInformation($"Client {id} does not belog to this server");
+                _logger.LogDebug($"Client {id} does not belog to this server");
                 return;
             }
 
