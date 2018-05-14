@@ -26,8 +26,8 @@ esac
 done
 
 clean () {
-  for i in $(seq 1 $CLIENTS); do; docker rm async-client-$i -f; done
-  for i in $(seq 1 $SERVERS); do; docker rm async-backend-$i -f; done
+  for i in $(seq 1 $CLIENTS); do docker rm async-client-$i -f; done
+  for i in $(seq 1 $SERVERS); do docker rm async-backend-$i -f; done
   docker rm redis -f
   docker network rm async-backend-poc
 }
