@@ -28,15 +28,15 @@ namespace Client
                 {
                     var messageId = Guid.NewGuid();
                     await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(messageId.ToString()), 0, Encoding.UTF8.GetByteCount(messageId.ToString())), WebSocketMessageType.Binary, true, CancellationToken.None);
-                    logger.LogInformation($"{clientId}|Sent message: {messageId}");
+                    logger.LogInformation($"{clientId}|Sent message {i}: {messageId}");
 
                     var response = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                     var responseMessage = Encoding.UTF8.GetString(Compact(buffer, response.Count));
 
                     if (messageId == Guid.Parse(responseMessage))
-                        logger.LogInformation($"{clientId}|Received ok: {responseMessage}");
+                        logger.LogInformation($"{clientId}|Received ok {i}: {responseMessage}");
                     else
-                        logger.LogError($"{clientId}|Received error: {responseMessage}");
+                        logger.LogError($"{clientId}|Received error {i}: {responseMessage}");
                 }
 
                 await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
