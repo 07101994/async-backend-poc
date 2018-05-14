@@ -13,14 +13,15 @@ namespace Client
     {
         public static async Task Main(string[] args)
         {
+            var clientId = Guid.NewGuid();
             var serviceProvider = ConfigureServices();
             var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
             using (var socket = new ClientWebSocket())
             {
-                socket.Options.SetRequestHeader("X-Request-ID", Guid.NewGuid().ToString());
+                socket.Options.SetRequestHeader("X-Request-ID", clientId.ToString());
                 await socket.ConnectAsync(new Uri($"ws://{args[0]}"), CancellationToken.None);
-                logger.LogInformation("Connection acquired");
+                logger.LogInformation($"{clientId}|Connection acquired");
 
                 var buffer = new byte[1024 * 4];
                 for (var i = 1; i <= 10; i++)
@@ -28,18 +29,18 @@ namespace Client
                     var messageString = $"Message number {i}";
                     var message = Encoding.UTF8.GetBytes(messageString);
                     await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(messageString), 0, Encoding.UTF8.GetByteCount(messageString)), WebSocketMessageType.Binary, true, CancellationToken.None);
-                    logger.LogInformation("Sent: {0}", messageString);
+                    logger.LogInformation($"{clientId}|Sent: {0}", messageString);
 
                     var response = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                    logger.LogInformation("Received: {0}", Encoding.UTF8.GetString(Compact(buffer, response.Count)));
+                    logger.LogInformation($"{clientId}|Received: {0}", Encoding.UTF8.GetString(Compact(buffer, response.Count)));
                     Thread.Sleep(1000);
                 }
 
                 await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-                logger.LogInformation("Connection closed");
+                logger.LogInformation($"{clientId}|Connection closed");
             }
 
-            logger.LogInformation("Client shutting down");
+            logger.LogInformation($"{clientId}|Client shutting down");
         }
 
         private static IServiceProvider ConfigureServices()
