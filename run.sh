@@ -25,6 +25,8 @@ case $i in
 esac
 done
 
+trap 'clean; exit 1' INT
+
 docker network create async-backend-poc > /dev/null
 
 echo "Starting redis server"
@@ -40,7 +42,7 @@ do
   docker run -i --rm --name async-backend-$i --network async-backend-poc -p 500$i:80 async-backend &
 done
 
-sleep 5000
+sleep 5
 
 echo "Building client docker image"
 docker build --force-rm -f Dockerfile-client -t async-client . > /dev/null
@@ -48,12 +50,18 @@ docker build --force-rm -f Dockerfile-client -t async-client . > /dev/null
 echo "Starting $CLIENTS clients"
 for i in $(seq 1 $CLIENTS)
 do
-  $SERVER=$(shuf -i1-$SERVERS -n1)
+  SERVER=$(shuf -i1-$SERVERS -n1)
   docker run -i --rm --name async-client-$i --network async-backend-poc async-client async-backend-$SERVER:500$SERVER &
 done
 
 wait
 
 echo "Process finished, cleaning it up.."
-docker rm redis -f
-docker networm rm async-backend-poc
+clean
+
+clean () {
+  for i in $(seq 1 $CLIENTS); do; docker rm async-client-$i -f; done
+  for i in $(seq 1 $SERVERS); do; docker rm async-backend-$i -f; done
+  docker rm redis -f
+  docker network rm async-backend-poc
+}
