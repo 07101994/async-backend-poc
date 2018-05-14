@@ -51,7 +51,7 @@ echo "Starting $CLIENTS clients"
 for i in $(seq 1 $CLIENTS)
 do
   SERVER=$(shuf -i1-$SERVERS -n1)
-  docker run -i --rm --name async-client-$i --network async-backend-poc async-client async-backend-$SERVER:500$SERVER &
+  docker run -i --rm --name async-client-$i --network async-backend-poc async-client async-backend-$SERVER:80 &
 done
 
 wait
