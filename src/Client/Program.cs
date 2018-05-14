@@ -33,7 +33,7 @@ namespace Client
                 Console.WriteLine("Connection closed");
             }
 
-            Console.ReadKey();
+            Console.WriteLine("Client shutting down");
         }
 
         private static byte[] Compact(byte[] array, int count)
