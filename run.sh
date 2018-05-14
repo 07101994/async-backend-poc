@@ -36,10 +36,10 @@ trap 'clean; exit 1' INT
 
 docker network create async-backend-poc > /dev/null
 
-echo "Starting redis server"
+echo "Starting redis"
 docker run -d --rm --name redis --network async-backend-poc redis:4.0
 
-echo "Building server docker image"
+echo -e '\nBuilding server docker image..'
 docker build --force-rm -f Dockerfile-backend -t async-backend . > /dev/null
 
 echo "Starting $SERVERS servers"
@@ -51,7 +51,7 @@ done
 
 sleep 5
 
-echo "Building client docker image"
+echo -e '\nBuilding client docker image..'
 docker build --force-rm -f Dockerfile-client -t async-client . > /dev/null
 
 echo "Starting $CLIENTS clients"

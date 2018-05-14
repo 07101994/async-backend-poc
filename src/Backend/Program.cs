@@ -3,6 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NLog.Web;
 using System.Threading.Tasks;
 
@@ -21,6 +22,11 @@ namespace Backend
             WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(new ConfigurationBuilder().AddCommandLine(args).Build())
                 .UseStartup<Startup>()
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Debug);
+                })
                 .UseNLog()
                 .Build();
     }
