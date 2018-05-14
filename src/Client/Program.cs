@@ -13,7 +13,7 @@ namespace Client
             using (var socket = new ClientWebSocket())
             {
                 socket.Options.SetRequestHeader("X-Request-ID", Guid.NewGuid().ToString());
-                await socket.ConnectAsync(new Uri("ws://localhost:64619"), CancellationToken.None);
+                await socket.ConnectAsync(new Uri($"ws://{args[0]}"), CancellationToken.None);
                 Console.WriteLine("Connection acquired");
 
                 var buffer = new byte[1024 * 4];

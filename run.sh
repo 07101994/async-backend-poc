@@ -6,7 +6,6 @@ USAGE='Usage: ./run.sh [OPTIONS]
 \n\t --clients \t Sets the number of clients (default 3)
 \n\nRuns a N clients that send messages to M servers that perform async operations and send the responses to their client.'
 
-ROOT=$pwd
 SERVERS=3
 CLIENTS=3
 
@@ -26,27 +25,30 @@ case $i in
 esac
 done
 
-echo "Building solution"
-dotnet build
-
+docker network create async-backend-poc
+echo "Building server docker image.."
+docker build --force-rm -f Dockerfile-backend -t async-backend .
 
 echo "Starting $SERVERS servers"
 
-cd src/Backend/bin/Debug/netcoreapp2.0
-for ((i=0; i<$SERVERS; i++))
+for ((i=1; i<=$SERVERS; i++))
 do
-  dotnet Backend.dll --server.urls "http://*:500$i"
+  docker run --rm -it --name async-backend-$i --network async-backend-poc -p 500$i:80 async-backend &
 done
 wait
 
 sleep 5000
 
+echo "Building client docker image.."
+docker build --force-rm -f Dockerfile-client -t async-client .
+
 echo "Starting $CLIENTS clients"
 cd $ROOT
 for ((i=1; i<=$CLIENTS; i++))
 do
-  dotnet run src/Client/Client.csproj
+  docker run --rm -it --name async-client-$i --network async-backend-poc async-client 5001 &
 done
 wait
 
-echo "Process finished"
+echo "Process finished, cleaning it up.."
+docker networm rm async-backend-poc
