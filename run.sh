@@ -46,7 +46,7 @@ echo "Starting $SERVERS servers"
 
 for i in $(seq 1 $SERVERS)
 do
-  docker run -i --rm --name async-backend-$i --network async-backend-poc -p 500$i:80 async-backend &
+  docker run -i --rm --name async-backend-$i --network async-backend-poc async-backend &
 done
 
 sleep 5
