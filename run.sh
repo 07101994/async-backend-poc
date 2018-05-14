@@ -25,12 +25,13 @@ case $i in
 esac
 done
 
-docker network create async-backend-poc
+docker network create async-backend-poc > /dev/null
+
 echo "Starting redis server"
 docker run -d --rm --name redis --network async-backend-poc redis:4.0
 
 echo "Building server docker image"
-docker build --force-rm -f Dockerfile-backend -t async-backend .
+docker build --force-rm -f Dockerfile-backend -t async-backend . > /dev/null
 
 echo "Starting $SERVERS servers"
 
@@ -38,12 +39,11 @@ for i in $(seq 1 $SERVERS)
 do
   docker run -i --rm --name async-backend-$i --network async-backend-poc -p 500$i:80 async-backend &
 done
-wait
 
 sleep 5000
 
 echo "Building client docker image"
-docker build --force-rm -f Dockerfile-client -t async-client .
+docker build --force-rm -f Dockerfile-client -t async-client . > /dev/null
 
 echo "Starting $CLIENTS clients"
 for i in $(seq 1 $CLIENTS)
@@ -51,6 +51,7 @@ do
   $SERVER=$(shuf -i1-$SERVERS -n1)
   docker run -i --rm --name async-client-$i --network async-backend-poc async-client async-backend-$SERVER:500$SERVER &
 done
+
 wait
 
 echo "Process finished, cleaning it up.."
