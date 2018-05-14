@@ -27,16 +27,16 @@ done
 
 docker network create async-backend-poc
 echo "Starting redis server"
-docker run --rm --name redis --network async-backend-poc redis:4.0
+docker run -d --rm --name redis --network async-backend-poc redis:4.0
 
 echo "Building server docker image"
 docker build --force-rm -f Dockerfile-backend -t async-backend .
 
 echo "Starting $SERVERS servers"
 
-for ((i=1; i<=$SERVERS; i++))
+for i in $(seq 1 $SERVERS)
 do
-  docker run --rm -it --name async-backend-$i --network async-backend-poc -p 500$i:80 async-backend &
+  docker run -i --rm --name async-backend-$i --network async-backend-poc -p 500$i:80 async-backend &
 done
 wait
 
@@ -46,10 +46,10 @@ echo "Building client docker image"
 docker build --force-rm -f Dockerfile-client -t async-client .
 
 echo "Starting $CLIENTS clients"
-cd $ROOT
-for ((i=1; i<=$CLIENTS; i++))
+for i in $(seq 1 $CLIENTS)
 do
-  docker run --rm -it --name async-client-$i --network async-backend-poc async-client async-backend-1:5001 &
+  $SERVER=$(shuf -i1-$SERVERS -n1)
+  docker run -i --rm --name async-client-$i --network async-backend-poc async-client async-backend-$SERVER:500$SERVER &
 done
 wait
 
