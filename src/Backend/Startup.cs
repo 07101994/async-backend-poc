@@ -18,6 +18,7 @@ namespace Backend
 
         public Startup(IHostingEnvironment env)
         {
+            NLog.Web.NLogBuilder.ConfigureNLog($"nlog.config");
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
